@@ -1,0 +1,27 @@
+[Unit]
+Description=HP DL360 Gen10 Fan Speed Controller (Redfish)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+
+# Pri štarte nastaví EnhancedCooling
+ExecStartPre=/opt/fan-controller/set-thermal-config.sh
+
+# Hlavný daemon
+ExecStart=/usr/bin/python3 /opt/fan-controller/fan_controller.py -c /etc/fan-controller/config.yaml
+
+Restart=always
+RestartSec=30
+
+User=root
+Group=root
+
+ProtectSystem=strict
+ProtectHome=yes
+PrivateTmp=yes
+MemoryMax=100M
+
+[Install]
+WantedBy=multi-user.target

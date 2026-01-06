@@ -1,0 +1,32 @@
+# HP DL360 Gen10 Fan Controller - Konfigurácia (Redfish API)
+# =========================================================
+
+# iLO pripojenie
+ilo:
+  host: "YOUR_ILO_IP"
+  username: "Administrator"
+  password: "YOUR_PASSWORD"
+
+# Teplotné prahy pre lineárnu interpoláciu
+temp_low: 40       # Teplota v °C pre minimálne otáčky
+temp_high: 80      # Teplota v °C pre maximálne otáčky
+
+# Rozsah rýchlosti ventilátorov (v percentách)
+fan_min: 15        # Minimálna rýchlosť (%)
+fan_max: 100       # Maximálna rýchlosť (%)
+
+# Interval kontroly teploty (v sekundách)
+interval: 10
+
+# Hysteréza - minimálna zmena rýchlosti na aplikáciu (%)
+hysteresis: 5
+
+# Senzory teploty na monitorovanie (Redfish názvy)
+# Nechajte prázdne pre všetky senzory
+sensors:
+  - "CPU"
+  - "Inlet"
+
+# Núdzové nastavenia
+emergency_speed: 80
+max_errors: 3

@@ -1,0 +1,23 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+dist/
+build/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Local config with passwords (use config.yaml.example instead)
+# config.yaml  # Uncomment if you don't want to track config
+
+# Claude Code
+.claude/
