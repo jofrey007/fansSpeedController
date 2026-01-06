@@ -53,7 +53,8 @@ sudo journalctl -u fan-controller -f
 | Parameter | Endpoint | Effect |
 |-----------|----------|--------|
 | `ThermalConfiguration` | `/redfish/v1/Chassis/1/Thermal/` | Must be `EnhancedCooling` for manual control |
-| `FanPercentMinimum` | `/redfish/v1/Chassis/1/Thermal/` | Minimum fan speed (0-100%) |
+| `FanPercentAdjust` | `/redfish/v1/Chassis/1/Thermal/` | **Recommended** - Sets target fan speed (0-100%) |
+| `FanPercentMinimum` | `/redfish/v1/Chassis/1/Thermal/` | Minimum fan speed (less stable, fans may drift up) |
 
 **Important:** Changes via Redfish are immediate (no reboot), but reset to BIOS defaults after server reboot.
 
