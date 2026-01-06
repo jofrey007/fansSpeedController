@@ -6,7 +6,7 @@ echo "Čas | Fans | MaxTemp"
 echo "----------------------------------------"
 
 for i in {1..10}; do
-    curl -k -s -u Administrator:7P7G6HP8 "https://10.31.0.10/redfish/v1/Chassis/1/Thermal/" | python3 -c "
+    curl -k -s -u "${ILO_USER:-Administrator}:${ILO_PASS}" "https://${ILO_HOST}/redfish/v1/Chassis/1/Thermal/" | python3 -c "
 import sys, json
 from datetime import datetime
 data = json.load(sys.stdin)

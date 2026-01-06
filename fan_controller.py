@@ -233,26 +233,26 @@ class HPEFanController:
 
     def try_set_fan_speed_oem(self, speed_percent: int) -> bool:
         """
-        Nastaví rýchlosť ventilátorov cez HPE OEM endpoint.
-        Používa FanPercentAdjust parameter (stabilnejší ako FanPercentMinimum).
+        Nastaví minimálnu rýchlosť ventilátorov cez HPE OEM endpoint.
+        Používa FanPercentMinimum parameter.
         """
         if self.dry_run:
-            self.logger.info(f"[DRY-RUN] Nastavujem FanPercentAdjust: {speed_percent}%")
+            self.logger.info(f"[DRY-RUN] Nastavujem FanPercentMinimum: {speed_percent}%")
             return True
 
         oem_data = {
             "Oem": {
                 "Hpe": {
-                    "FanPercentAdjust": speed_percent
+                    "FanPercentMinimum": speed_percent
                 }
             }
         }
         result, status = self.client.patch("/redfish/v1/Chassis/1/Thermal/", oem_data)
         if status in [200, 204]:
-            self.logger.info(f"FanPercentAdjust nastavený na: {speed_percent}%")
+            self.logger.info(f"FanPercentMinimum nastavený na: {speed_percent}%")
             return True
 
-        self.logger.warning(f"Nepodarilo sa nastaviť FanPercentAdjust (status: {status})")
+        self.logger.warning(f"Nepodarilo sa nastaviť FanPercentMinimum (status: {status})")
         return False
 
     def set_thermal_configuration(self, config: str) -> bool:

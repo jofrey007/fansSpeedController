@@ -53,8 +53,9 @@ sudo journalctl -u fan-controller -f
 | Parameter | Endpoint | Effect |
 |-----------|----------|--------|
 | `ThermalConfiguration` | `/redfish/v1/Chassis/1/Thermal/` | Must be `EnhancedCooling` for manual control |
-| `FanPercentAdjust` | `/redfish/v1/Chassis/1/Thermal/` | **Recommended** - Sets target fan speed (0-100%) |
-| `FanPercentMinimum` | `/redfish/v1/Chassis/1/Thermal/` | Minimum fan speed (less stable, fans may drift up) |
+| `FanPercentMinimum` | `/redfish/v1/Chassis/1/Thermal/` | Sets minimum fan speed (0-100%) |
+
+**Note:** `FanPercentAdjust` is NOT available on all iLO 5 versions (returns HTTP 400).
 
 **Important:** Changes via Redfish are immediate (no reboot), but reset to BIOS defaults after server reboot.
 
@@ -63,15 +64,20 @@ sudo journalctl -u fan-controller -f
 `/etc/fan-controller/config.yaml`:
 ```yaml
 ilo:
-  host: "10.31.0.10"
+  host: "ILO_IP"
   username: "Administrator"
-  password: "password"
+  password: "PASSWORD"
 
 temp_low: 40      # °C → fan_min
 temp_high: 80     # °C → fan_max
 fan_min: 15       # %
 fan_max: 100      # %
 interval: 10      # seconds
+
+sensors:          # Temperature sensors to monitor
+  - "BMC"         # BMC chip - often hottest (60-66°C)
+  - "CPU"         # CPU package temperatures
+  - "Inlet"       # Ambient inlet temperature
 ```
 
 ## Redfish API Examples
@@ -93,15 +99,19 @@ curl -k -s -u USER:PASS "https://ILO/redfish/v1/Chassis/1/Thermal/" | python3 -m
 
 ## Test Results
 
-| ThermalConfiguration | Behavior (5 min test) |
-|---------------------|----------------------|
-| OptimalCooling | Fans increase: 30% → 41% (unstable) |
-| **EnhancedCooling** | Fans stable: ~30-35% |
+| ThermalConfiguration | Behavior |
+|---------------------|----------|
+| OptimalCooling | Fans drift: 30% → 100% over time (unstable) |
+| **EnhancedCooling** | Fans stable: ~36-57% depending on BMC temp |
+
+Typical temperatures: BMC 60-66°C, CPU 40-47°C, Inlet 23-24°C
 
 ## Important Notes
 
 - IPMI raw commands do NOT work on HPE iLO 5 Gen10
+- `FanPercentAdjust` may not be available (HTTP 400) - use `FanPercentMinimum`
 - `OptimalCooling` causes gradual fan speed increase regardless of temperature
 - `EnhancedCooling` is required for stable fan control
-- PSU redundancy loss (missing PSU) triggers 100% fan speed (iLO safety)
+- PSU redundancy loss (missing PSU) can trigger higher fan speeds (iLO safety)
 - After iLO config changes, brief "ResetInProgress" errors are normal
+- AMS (Agentless Management Service) should be installed but doesn't prevent fan drift alone
