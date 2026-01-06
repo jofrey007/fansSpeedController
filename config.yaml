@@ -24,6 +24,7 @@ hysteresis: 5
 # Senzory teploty na monitorovanie (Redfish názvy)
 # Nechajte prázdne pre všetky senzory
 sensors:
+  - "BMC"
   - "CPU"
   - "Inlet"
 
