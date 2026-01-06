@@ -110,8 +110,24 @@ Typical temperatures: BMC 60-66°C, CPU 40-47°C, Inlet 23-24°C
 
 - IPMI raw commands do NOT work on HPE iLO 5 Gen10
 - `FanPercentAdjust` may not be available (HTTP 400) - use `FanPercentMinimum`
+- `FanPercentMinimum` sets only **minimum** - iLO can still increase fans above this value
 - `OptimalCooling` causes gradual fan speed increase regardless of temperature
 - `EnhancedCooling` is required for stable fan control
-- PSU redundancy loss (missing PSU) can trigger higher fan speeds (iLO safety)
-- After iLO config changes, brief "ResetInProgress" errors are normal
 - AMS (Agentless Management Service) should be installed but doesn't prevent fan drift alone
+- After iLO config changes, brief "ResetInProgress" errors are normal
+
+## Known Issue: Missing PSU causes 100% fan speed
+
+**Root cause:** When PSU 2 is disconnected (ACPowerLost), iLO overrides all fan settings and gradually increases to 100% as a safety measure.
+
+**Symptoms:**
+- Fans drift from 30% → 100% over ~15-30 minutes
+- `FanPercentMinimum` settings are ignored
+- Even `EnhancedCooling` doesn't prevent the drift
+
+**Solution:**
+1. Connect both PSUs (or install PSU blank for proper airflow)
+2. Perform cold boot (disconnect power for 30 seconds)
+3. Service should then maintain stable fan speeds
+
+**Workaround (temporary):** None effective - iLO safety overrides cannot be bypassed via Redfish API.
