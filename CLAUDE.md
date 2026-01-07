@@ -130,6 +130,13 @@ Typical temperatures: BMC 60-66°C, CPU 40-47°C, Inlet 23-24°C
 1. Remove third-party drives, OR
 2. Use HPE-branded drives with embedded temperature sensors
 
-**Tested:** After removing 3x Kingston DC600M SSDs and 1x WD HDD, fans dropped to 11-21% and remained stable even with `OptimalCooling` (default).
+**Tested:**
+- WD Blue 1TB HDD caused fans to drift to 100%
+- After replacing with HGST 500GB, fans stable at 11-12%
+- Kingston DC600M SSDs work fine (no fan issues)
 
-**Note:** Missing PSU (ACPowerLost) may also contribute to higher fan speeds, but third-party drives are the primary cause.
+**Problematic drives:** Consumer-grade drives (WD Blue, etc.) without proper temperature reporting.
+
+**Working drives:** Enterprise drives (HGST, Kingston DC series) with proper SMART temperature sensors.
+
+**Note:** Missing PSU (ACPowerLost) may also contribute to higher fan speeds, but incompatible drives are the primary cause.
