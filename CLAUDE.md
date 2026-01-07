@@ -116,18 +116,20 @@ Typical temperatures: BMC 60-66°C, CPU 40-47°C, Inlet 23-24°C
 - AMS (Agentless Management Service) should be installed but doesn't prevent fan drift alone
 - After iLO config changes, brief "ResetInProgress" errors are normal
 
-## Known Issue: Missing PSU causes 100% fan speed
+## Known Issue: Third-party drives cause 100% fan speed
 
-**Root cause:** When PSU 2 is disconnected (ACPowerLost), iLO overrides all fan settings and gradually increases to 100% as a safety measure.
+**Root cause:** Non-HPE drives (Kingston, WD, etc.) don't have embedded temperature sensors that HPE drives have. iLO cannot read drive temperatures and gradually increases fan speed as a safety measure.
 
 **Symptoms:**
 - Fans drift from 30% → 100% over ~15-30 minutes
 - `FanPercentMinimum` settings are ignored
 - Even `EnhancedCooling` doesn't prevent the drift
+- Problem persists regardless of PSU configuration
 
 **Solution:**
-1. Connect both PSUs (or install PSU blank for proper airflow)
-2. Perform cold boot (disconnect power for 30 seconds)
-3. Service should then maintain stable fan speeds
+1. Remove third-party drives, OR
+2. Use HPE-branded drives with embedded temperature sensors
 
-**Workaround (temporary):** None effective - iLO safety overrides cannot be bypassed via Redfish API.
+**Tested:** After removing 3x Kingston DC600M SSDs and 1x WD HDD, fans dropped to 11-21% and remained stable even with `OptimalCooling` (default).
+
+**Note:** Missing PSU (ACPowerLost) may also contribute to higher fan speeds, but third-party drives are the primary cause.
